@@ -466,3 +466,218 @@ void drawZnBlnd(GLUquadric *q, Material sMaterials[], GLfloat radius)
             
     }
 }
+
+// function for drawing the Simple Cubic lattice
+void drawHeusler(GLUquadric *q, Material sMaterials[], GLfloat radius)
+{
+    GLfloat r = radius*2.0f;
+    
+    // assign the vertices of a cube to a multidimensional array to be used for drawing
+    GLfloat vertices[8][3] =    {   {  r,  r,  r }, // v0 
+                                    { -r,  r,  r }, // v1 
+                                    { -r, -r,  r }, // v2 
+                                    {  r, -r,  r }, // v3 
+                                    {  r, -r, -r }, // v4 
+                                    {  r,  r, -r }, // v5 
+                                    { -r,  r, -r }, // v6 
+                                    { -r, -r, -r }  // v7
+                                };
+    // draw the wire cube to show connection for vertices of unit cell
+    glPushMatrix();
+    glutWireCube(2*r);
+    glPopMatrix();
+
+    // Using a loop to draw all the spheres at the vertices to simplify program
+    // bottom front left 
+    for(int i=0; i<8; i++)
+    {
+        glPushMatrix();
+        gluQuadricOrientation(q, GLU_OUTSIDE);
+        glEnable(GL_TEXTURE_GEN_S);
+        glEnable(GL_TEXTURE_GEN_T);
+        glTranslatef(vertices[i][0], vertices[i][1], vertices[i][2]);
+        sMaterials[0].setupMaterial();
+        gluSphere(q, radius, 50, 25);
+        sMaterials[0].stopMaterial();
+        glDisable(GL_TEXTURE_GEN_S);
+        glDisable(GL_TEXTURE_GEN_T);
+        glPopMatrix();
+    }
+
+    // draw the wire cube to show connection for vertices of unit cell
+    glPushMatrix();
+    glTranslatef(2*r, 0, 0);
+    glutWireCube(2*r);
+    glPopMatrix();
+
+    // bottom front right 
+    for(int i=0; i<8; i++)
+    {
+        glPushMatrix();
+        gluQuadricOrientation(q, GLU_OUTSIDE);
+        glEnable(GL_TEXTURE_GEN_S);
+        glEnable(GL_TEXTURE_GEN_T);
+        glTranslatef(vertices[i][0] + 2*r, vertices[i][1], vertices[i][2]);
+        sMaterials[0].setupMaterial();
+        gluSphere(q, radius, 50, 25);
+        sMaterials[0].stopMaterial();
+        glDisable(GL_TEXTURE_GEN_S);
+        glDisable(GL_TEXTURE_GEN_T);
+        glPopMatrix();
+    }
+
+    // draw the wire cube to show connection for vertices of unit cell
+    glPushMatrix();
+    glTranslatef(0, 0, 2*r);
+    glutWireCube(2*r);
+    glPopMatrix();
+
+    // bottom back left
+    for(int i=0; i<8; i++)
+    {
+        glPushMatrix();
+        gluQuadricOrientation(q, GLU_OUTSIDE);
+        glEnable(GL_TEXTURE_GEN_S);
+        glEnable(GL_TEXTURE_GEN_T);
+        glTranslatef(vertices[i][0], vertices[i][1], vertices[i][2] + 2*r);
+        sMaterials[0].setupMaterial();
+        gluSphere(q, radius, 50, 25);
+        sMaterials[0].stopMaterial();
+        glDisable(GL_TEXTURE_GEN_S);
+        glDisable(GL_TEXTURE_GEN_T);
+        glPopMatrix();
+    }
+
+    // draw the wire cube to show connection for vertices of unit cell
+    glPushMatrix();
+    glTranslatef(2*r, 0, 2*r);
+    glutWireCube(2*r);
+    glPopMatrix();
+
+    // bottom back right
+    for(int i=0; i<8; i++)
+    {
+        glPushMatrix();
+        gluQuadricOrientation(q, GLU_OUTSIDE);
+        glEnable(GL_TEXTURE_GEN_S);
+        glEnable(GL_TEXTURE_GEN_T);
+        glTranslatef(vertices[i][0] + 2*r, vertices[i][1], vertices[i][2] + 2*r);
+        sMaterials[0].setupMaterial();
+        gluSphere(q, radius, 50, 25);
+        sMaterials[0].stopMaterial();
+        glDisable(GL_TEXTURE_GEN_S);
+        glDisable(GL_TEXTURE_GEN_T);
+        glPopMatrix();
+    }
+
+    // draw the wire cube to show connection for vertices of unit cell
+    glPushMatrix();
+    glTranslatef(0, 2*r, 0);
+    glutWireCube(2*r);
+    glPopMatrix();
+
+    // top front left 
+    for(int i=0; i<8; i++)
+    {
+        glPushMatrix();
+        gluQuadricOrientation(q, GLU_OUTSIDE);
+        glEnable(GL_TEXTURE_GEN_S);
+        glEnable(GL_TEXTURE_GEN_T);
+        glTranslatef(vertices[i][0], vertices[i][1] + 2*r, vertices[i][2]);
+        sMaterials[0].setupMaterial();
+        gluSphere(q, radius, 50, 25);
+        sMaterials[0].stopMaterial();
+        glDisable(GL_TEXTURE_GEN_S);
+        glDisable(GL_TEXTURE_GEN_T);
+        glPopMatrix();
+    }
+
+    // draw the wire cube to show connection for vertices of unit cell
+    glPushMatrix();
+    glTranslatef(2*r, 2*r, 0);
+    glutWireCube(2*r);
+    glPopMatrix();
+
+    // top front right 
+    for(int i=0; i<8; i++)
+    {
+        glPushMatrix();
+        gluQuadricOrientation(q, GLU_OUTSIDE);
+        glEnable(GL_TEXTURE_GEN_S);
+        glEnable(GL_TEXTURE_GEN_T);
+        glTranslatef(vertices[i][0] + 2*r, vertices[i][1] + 2*r, vertices[i][2]);
+        sMaterials[0].setupMaterial();
+        gluSphere(q, radius, 50, 25);
+        sMaterials[0].stopMaterial();
+        glDisable(GL_TEXTURE_GEN_S);
+        glDisable(GL_TEXTURE_GEN_T);
+        glPopMatrix();
+    }
+
+    // draw the wire cube to show connection for vertices of unit cell
+    glPushMatrix();
+    glTranslatef(0, 2*r, 2*r);
+    glutWireCube(2*r);
+    glPopMatrix();
+
+    // top back left
+    for(int i=0; i<8; i++)
+    {
+        glPushMatrix();
+        gluQuadricOrientation(q, GLU_OUTSIDE);
+        glEnable(GL_TEXTURE_GEN_S);
+        glEnable(GL_TEXTURE_GEN_T);
+        glTranslatef(vertices[i][0], vertices[i][1] + 2*r, vertices[i][2] + 2*r);
+        sMaterials[0].setupMaterial();
+        gluSphere(q, radius, 50, 25);
+        sMaterials[0].stopMaterial();
+        glDisable(GL_TEXTURE_GEN_S);
+        glDisable(GL_TEXTURE_GEN_T);
+        glPopMatrix();
+    }
+
+    // draw the wire cube to show connection for vertices of unit cell
+    glPushMatrix();
+    glTranslatef(2*r, 2*r, 2*r);
+    glutWireCube(2*r);
+    glPopMatrix();
+
+    // top back right
+    for(int i=0; i<8; i++)
+    {
+        glPushMatrix();
+        gluQuadricOrientation(q, GLU_OUTSIDE);
+        glEnable(GL_TEXTURE_GEN_S);
+        glEnable(GL_TEXTURE_GEN_T);
+        glTranslatef(vertices[i][0] + 2*r, vertices[i][1] + 2*r, vertices[i][2] + 2*r);
+        sMaterials[0].setupMaterial();
+        gluSphere(q, radius, 50, 25);
+        sMaterials[0].stopMaterial();
+        glDisable(GL_TEXTURE_GEN_S);
+        glDisable(GL_TEXTURE_GEN_T);
+        glPopMatrix();
+    }
+
+    // draw the wire cube to show connection for vertices of unit cell
+    glPushMatrix();
+    glTranslatef(r, r, r);
+    glColor3f(1.0, 0.0, 0.0);
+    glutWireCube(2*r);
+    glPopMatrix();
+
+    // middle 
+    for(int i=0; i<8; i++)
+    {
+        glPushMatrix();
+        gluQuadricOrientation(q, GLU_OUTSIDE);
+        glEnable(GL_TEXTURE_GEN_S);
+        glEnable(GL_TEXTURE_GEN_T);
+        glTranslatef(vertices[i][0] + r, vertices[i][1] + r, vertices[i][2] + r);
+        sMaterials[1].setupMaterial();
+        gluSphere(q, radius, 50, 25);
+        sMaterials[1].stopMaterial();
+        glDisable(GL_TEXTURE_GEN_S);
+        glDisable(GL_TEXTURE_GEN_T);
+        glPopMatrix();
+    }
+}

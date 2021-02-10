@@ -16,6 +16,7 @@ void drawCubic(GLUquadric *q, Material sMaterials[], GLfloat radius);
 void drawBCC(GLUquadric *q, Material sMaterials[], GLfloat radius);
 void drawFCC(GLUquadric *q, Material sMaterials[], GLfloat radius);
 void drawZnBlnd(GLUquadric *q, Material sMaterials[], GLfloat radius);
+void drawHeusler(GLUquadric *q, Material sMaterials[], GLfloat radius);
 void reshape(GLsizei width, GLsizei height);            // use GLsizei makes it consistent across all platforms
 void keyboardClick(unsigned char key, int x, int y);    // callback function with multiple arguments for keyboard pressed
 void specialInput(int key, int x, int y);               // callback for special inputs that are not recognized in GLUT
@@ -29,6 +30,7 @@ bool cubicEnable;                   // Are we displaying the Simple Cubic struct
 bool bccEnable;                     // Are we displaying the BCC structure?
 bool fccEnable;                     // Are we displaying the FCC structure?
 bool dmndEnable;                    // Are we displaying the Diamond (Zinc-blende) crystal lattice?
+bool heuslerEnable;                 // Are we displaying the Heusler Alloy crystal structure?
 bool pauseRotation;                 // Check for paused rotation
 GLfloat radius;                     // radius of the spheres being used
 GLfloat locationX, locationY;       // Current Location of the object
@@ -95,6 +97,7 @@ void resetScene()
     bccEnable = false;
     fccEnable = false;
     dmndEnable = false;
+    heuslerEnable = false;
     pauseRotation = false;
     radius = 0.0f;
     locationX = 0.0;
@@ -226,10 +229,9 @@ void display(void)
         glLoadIdentity();
         glColor3f(1.0f, 1.0f, 1.0f);
         
-        glPushMatrix();
         strcpy(text, "Simple Cubic Lattice Displayed");
         textWidth = getBitmapTextWidth(text, GLUT_BITMAP_TIMES_ROMAN_24);
-        drawBitmapText(text, GLUT_BITMAP_TIMES_ROMAN_24, windowWidth-textWidth-6, windowHeight-24.0f);
+        drawBitmapText(text, GLUT_BITMAP_TIMES_ROMAN_24, windowWidth-textWidth-6.0f, windowHeight-24.0f);
         glPopMatrix();
     }
 
@@ -250,10 +252,9 @@ void display(void)
         glLoadIdentity();
         glColor3f(1.0f, 1.0f, 1.0f);
         
-        glPushMatrix();
         strcpy(text, "Body-Centered Cubic Lattice Displayed");
         textWidth = getBitmapTextWidth(text, GLUT_BITMAP_TIMES_ROMAN_24);
-        drawBitmapText(text, GLUT_BITMAP_TIMES_ROMAN_24, windowWidth-textWidth-6, windowHeight-24.0f);
+        drawBitmapText(text, GLUT_BITMAP_TIMES_ROMAN_24, windowWidth-textWidth-6.0f, windowHeight-24.0f);
         glPopMatrix();
     }
 
@@ -274,10 +275,9 @@ void display(void)
         glLoadIdentity();
         glColor3f(1.0f, 1.0f, 1.0f);
         
-        glPushMatrix();
         strcpy(text, "Face-Centered Cubic Lattice Displayed");
         textWidth = getBitmapTextWidth(text, GLUT_BITMAP_TIMES_ROMAN_24);
-        drawBitmapText(text, GLUT_BITMAP_TIMES_ROMAN_24, windowWidth-textWidth-6, windowHeight-24.0f);
+        drawBitmapText(text, GLUT_BITMAP_TIMES_ROMAN_24, windowWidth-textWidth-6.0f, windowHeight-24.0f);
         glPopMatrix();
     }
 
@@ -298,10 +298,33 @@ void display(void)
         glLoadIdentity();
         glColor3f(1.0f, 1.0f, 1.0f);
         
-        glPushMatrix();
         strcpy(text, "Diamond (Zinc-blende) Lattice Displayed");
         textWidth = getBitmapTextWidth(text, GLUT_BITMAP_TIMES_ROMAN_24);
-        drawBitmapText(text, GLUT_BITMAP_TIMES_ROMAN_24, windowWidth-textWidth-6, windowHeight-24.0f);
+        drawBitmapText(text, GLUT_BITMAP_TIMES_ROMAN_24, windowWidth-textWidth-6.0f, windowHeight-24.0f);
+        glPopMatrix();
+    }
+
+    if(heuslerEnable) 
+    {
+        glPushMatrix();
+        glRotatef(objectRotation, 0.0f, 1.0f, 0.0f);
+        glTranslatef(-2.0*radius, -2.0*radius, -2.0*radius);
+        drawHeusler(q, sphereMaterials, radius);
+        glPopMatrix();
+        
+        // Now draw corner texts
+        glPushMatrix();
+        glMatrixMode(GL_PROJECTION);        // referencing the screen. Projection = screen = Rasta 
+        glLoadIdentity();
+        glViewport(0, 0, windowWidth, windowHeight);
+        gluOrtho2D(0.0f, (GLfloat)windowWidth, 0.0f, (GLfloat)windowHeight);
+        glMatrixMode(GL_MODELVIEW);
+        glLoadIdentity();
+        glColor3f(1.0f, 1.0f, 1.0f);
+        
+        strcpy(text, "Heusler Alloy Displayed");
+        textWidth = getBitmapTextWidth(text, GLUT_BITMAP_TIMES_ROMAN_24);
+        drawBitmapText(text, GLUT_BITMAP_TIMES_ROMAN_24, windowWidth-textWidth-6.0f, windowHeight-24.0f);
         glPopMatrix();
     }
 
@@ -338,6 +361,7 @@ void keyboardClick(unsigned char key, int x, int y)
             bccEnable = false;
             fccEnable = false;
             dmndEnable = false;
+            heuslerEnable = false;
             radius = 0.5f;
             break;
         case 'C':
@@ -345,6 +369,7 @@ void keyboardClick(unsigned char key, int x, int y)
             bccEnable = false;
             fccEnable = false;
             dmndEnable = false;
+            heuslerEnable = false;
             radius = 1.0f;
             break;
         case 'b': // b and B will be used for the BCC structure
@@ -352,6 +377,7 @@ void keyboardClick(unsigned char key, int x, int y)
             bccEnable = !bccEnable;
             fccEnable = false;
             dmndEnable = false;
+            heuslerEnable = false;
             radius = 0.5f;
             break;
         case 'B':
@@ -359,6 +385,7 @@ void keyboardClick(unsigned char key, int x, int y)
             bccEnable = !bccEnable;
             fccEnable = false;
             dmndEnable = false;
+            heuslerEnable = false;
             radius = 1.0f;
             break;
         case 'f': // f and F will be used for the FCC structure
@@ -366,6 +393,7 @@ void keyboardClick(unsigned char key, int x, int y)
             bccEnable = false;
             fccEnable = !fccEnable;
             dmndEnable = false;
+            heuslerEnable = false;
             radius = 0.5f;
             break;
         case 'F':
@@ -373,6 +401,7 @@ void keyboardClick(unsigned char key, int x, int y)
             bccEnable = false;
             fccEnable = !fccEnable;
             dmndEnable = false;
+            heuslerEnable = false;
             radius = 1.0f;
             break;
         case 'z': // z and Z will be used for the Diamond structure
@@ -380,6 +409,7 @@ void keyboardClick(unsigned char key, int x, int y)
             bccEnable = false;
             fccEnable = false;
             dmndEnable = !dmndEnable;
+            heuslerEnable = false;
             radius = 0.5f;
             break;
         case 'Z':
@@ -387,6 +417,23 @@ void keyboardClick(unsigned char key, int x, int y)
             bccEnable = false;
             fccEnable = false;
             dmndEnable = !dmndEnable;
+            heuslerEnable = false;
+            radius = 1.0f;
+            break;
+        case 'h': // z and Z will be used for the Diamond structure
+            cubicEnable = false;
+            bccEnable = false;
+            fccEnable = false;
+            dmndEnable = false;
+            heuslerEnable = !heuslerEnable;
+            radius = 0.5f;
+            break;
+        case 'H':
+            cubicEnable = false;
+            bccEnable = false;
+            fccEnable = false;
+            dmndEnable = false;
+            heuslerEnable = !heuslerEnable;
             radius = 1.0f;
             break;
         case 'p': case 'P': // p is used to pause the rotation of the lattice structures to make better observations

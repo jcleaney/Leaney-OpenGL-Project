@@ -2,7 +2,6 @@
 //Description: Developing openGL to display Unit Cells!
 //Author: Joshua Leaney
 //Date Last Modified: 12/7/20
-//Video Link: https://use.vg/KSltyz
 
 #include "GLUtilities.h"
 #include "Camera.h"

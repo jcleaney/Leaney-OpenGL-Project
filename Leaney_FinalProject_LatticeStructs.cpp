@@ -215,6 +215,7 @@ void display(void)
     {
         glPushMatrix();
         glRotatef(objectRotation, 0.0f, 1.0f, 0.0f);
+        glTranslatef(0.0f, 2*radius, 0.0f);
         drawCubic(q, sphereMaterials, radius);
         glPopMatrix();
         
@@ -261,6 +262,7 @@ void display(void)
     {
         glPushMatrix();
         glRotatef(objectRotation, 0.0f, 1.0f, 0.0f);
+        glTranslatef(0.0f, 2*radius, 0.0f);
         drawFCC(q, sphereMaterials, radius);
         glPopMatrix();
 
@@ -284,6 +286,7 @@ void display(void)
     {
         glPushMatrix();
         glRotatef(objectRotation, 0.0f, 1.0f, 0.0f);
+        glTranslatef(0.0f, 2*radius, 0.0f);
         drawZnBlnd(q, sphereMaterials, radius);
         glPopMatrix();
 
@@ -308,6 +311,7 @@ void display(void)
         glPushMatrix();
         glRotatef(objectRotation, 0.0f, 1.0f, 0.0f);
         glTranslatef(-2.0*radius, -2.0*radius, -2.0*radius);
+        glTranslatef(0.0f, 4*radius, 0.0f);
         drawHeusler(q, sphereMaterials, radius);
         glPopMatrix();
         
@@ -343,16 +347,16 @@ void keyboardClick(unsigned char key, int x, int y)
         case 'r': case 'R':
             resetScene();
             break;
-        case 'w': case 'i':
+        case 'w':
             avatarPOV.moveForward(0.5f);
             break;
-        case 's': case 'k':
+        case 's':
             avatarPOV.moveBackward(0.5f);
             break;
-        case 'a': case 'j':
+        case 'a':
             avatarPOV.strafeLeft(0.5f);
             break;
-        case 'd': case 'l':
+        case 'd':
             avatarPOV.strafeRight(0.5f);
             break;
         case 'c': // b and B will be used for the BCC structure
@@ -438,6 +442,14 @@ void keyboardClick(unsigned char key, int x, int y)
         case 'p': case 'P': // p is used to pause the rotation of the lattice structures to make better observations
             pauseRotation = !pauseRotation;
             break;
+        case 'i':
+            radius = radius + 0.1;
+            if (radius > 5.0) radius = 5.0;
+            break;
+        case 'u':
+            radius = radius - 0.1;
+            if (radius < 0.1) radius = 0.1;
+            break;
     }
     
     glutPostRedisplay();    // update at earliest convenience, call dispay function callback and redraw the glut shapes // basically asks it to redraw the screen
@@ -448,10 +460,12 @@ void specialInput(int key, int x, int y)
     switch(key)
     {
         case GLUT_KEY_UP:
-            avatarPOV.moveUp();
+            radius = radius + 0.1;
+            if (radius > 5.0) radius = 5.0;
             break;
         case GLUT_KEY_DOWN:
-            avatarPOV.moveDown();
+            radius = radius - 0.1;
+            if (radius < 0.1) radius = 0.1;
             break;
         case GLUT_KEY_LEFT:
             avatarPOV.turnLeft();

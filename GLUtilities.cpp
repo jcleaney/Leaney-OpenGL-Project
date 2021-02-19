@@ -487,10 +487,49 @@ void drawHeusler(GLUquadric *q, Material sMaterials[], GLfloat radius)
     glutWireCube(2*r);
     glPopMatrix();
 
-    // Using a loop to draw all the spheres at the vertices to simplify program
-    // bottom front left 
+    glPushMatrix();
+    glTranslatef(2*r, 0, 0);
+    glutWireCube(2*r);
+    glPopMatrix();
+
+    glPushMatrix();
+    glTranslatef(0, 0, 2*r);
+    glutWireCube(2*r);
+    glPopMatrix();
+
+    glPushMatrix();
+    glTranslatef(2*r, 0, 2*r);
+    glutWireCube(2*r);
+    glPopMatrix();
+
+    glPushMatrix();
+    glTranslatef(0, 2*r, 0);
+    glutWireCube(2*r);
+    glPopMatrix();
+
+    glPushMatrix();
+    glTranslatef(2*r, 2*r, 0);
+    glutWireCube(2*r);
+    glPopMatrix();
+
+    glPushMatrix();
+    glTranslatef(0, 2*r, 2*r);
+    glutWireCube(2*r);
+    glPopMatrix();
+
+    glPushMatrix();
+    glTranslatef(2*r, 2*r, 2*r);
+    glutWireCube(2*r);
+    glPopMatrix();
+
+    glPushMatrix();
+    glTranslatef(r, r, r);
+    glutWireCube(2*r);
+    glPopMatrix();
+
     for(int i=0; i<8; i++)
     {
+        // bottom front left
         glPushMatrix();
         gluQuadricOrientation(q, GLU_OUTSIDE);
         glEnable(GL_TEXTURE_GEN_S);
@@ -502,17 +541,8 @@ void drawHeusler(GLUquadric *q, Material sMaterials[], GLfloat radius)
         glDisable(GL_TEXTURE_GEN_S);
         glDisable(GL_TEXTURE_GEN_T);
         glPopMatrix();
-    }
 
-    // draw the wire cube to show connection for vertices of unit cell
-    glPushMatrix();
-    glTranslatef(2*r, 0, 0);
-    glutWireCube(2*r);
-    glPopMatrix();
-
-    // bottom front right 
-    for(int i=0; i<8; i++)
-    {
+        // bottom front right 
         glPushMatrix();
         gluQuadricOrientation(q, GLU_OUTSIDE);
         glEnable(GL_TEXTURE_GEN_S);
@@ -524,17 +554,8 @@ void drawHeusler(GLUquadric *q, Material sMaterials[], GLfloat radius)
         glDisable(GL_TEXTURE_GEN_S);
         glDisable(GL_TEXTURE_GEN_T);
         glPopMatrix();
-    }
 
-    // draw the wire cube to show connection for vertices of unit cell
-    glPushMatrix();
-    glTranslatef(0, 0, 2*r);
-    glutWireCube(2*r);
-    glPopMatrix();
-
-    // bottom back left
-    for(int i=0; i<8; i++)
-    {
+        // bottom back left
         glPushMatrix();
         gluQuadricOrientation(q, GLU_OUTSIDE);
         glEnable(GL_TEXTURE_GEN_S);
@@ -546,17 +567,8 @@ void drawHeusler(GLUquadric *q, Material sMaterials[], GLfloat radius)
         glDisable(GL_TEXTURE_GEN_S);
         glDisable(GL_TEXTURE_GEN_T);
         glPopMatrix();
-    }
 
-    // draw the wire cube to show connection for vertices of unit cell
-    glPushMatrix();
-    glTranslatef(2*r, 0, 2*r);
-    glutWireCube(2*r);
-    glPopMatrix();
-
-    // bottom back right
-    for(int i=0; i<8; i++)
-    {
+        // bottom back right
         glPushMatrix();
         gluQuadricOrientation(q, GLU_OUTSIDE);
         glEnable(GL_TEXTURE_GEN_S);
@@ -568,17 +580,8 @@ void drawHeusler(GLUquadric *q, Material sMaterials[], GLfloat radius)
         glDisable(GL_TEXTURE_GEN_S);
         glDisable(GL_TEXTURE_GEN_T);
         glPopMatrix();
-    }
-
-    // draw the wire cube to show connection for vertices of unit cell
-    glPushMatrix();
-    glTranslatef(0, 2*r, 0);
-    glutWireCube(2*r);
-    glPopMatrix();
-
-    // top front left 
-    for(int i=0; i<8; i++)
-    {
+    
+        // top front left 
         glPushMatrix();
         gluQuadricOrientation(q, GLU_OUTSIDE);
         glEnable(GL_TEXTURE_GEN_S);
@@ -589,18 +592,9 @@ void drawHeusler(GLUquadric *q, Material sMaterials[], GLfloat radius)
         sMaterials[0].stopMaterial();
         glDisable(GL_TEXTURE_GEN_S);
         glDisable(GL_TEXTURE_GEN_T);
-        glPopMatrix();
-    }
+        glPopMatrix();    
 
-    // draw the wire cube to show connection for vertices of unit cell
-    glPushMatrix();
-    glTranslatef(2*r, 2*r, 0);
-    glutWireCube(2*r);
-    glPopMatrix();
-
-    // top front right 
-    for(int i=0; i<8; i++)
-    {
+        // top front right 
         glPushMatrix();
         gluQuadricOrientation(q, GLU_OUTSIDE);
         glEnable(GL_TEXTURE_GEN_S);
@@ -612,17 +606,8 @@ void drawHeusler(GLUquadric *q, Material sMaterials[], GLfloat radius)
         glDisable(GL_TEXTURE_GEN_S);
         glDisable(GL_TEXTURE_GEN_T);
         glPopMatrix();
-    }
 
-    // draw the wire cube to show connection for vertices of unit cell
-    glPushMatrix();
-    glTranslatef(0, 2*r, 2*r);
-    glutWireCube(2*r);
-    glPopMatrix();
-
-    // top back left
-    for(int i=0; i<8; i++)
-    {
+        // top back left
         glPushMatrix();
         gluQuadricOrientation(q, GLU_OUTSIDE);
         glEnable(GL_TEXTURE_GEN_S);
@@ -633,18 +618,9 @@ void drawHeusler(GLUquadric *q, Material sMaterials[], GLfloat radius)
         sMaterials[0].stopMaterial();
         glDisable(GL_TEXTURE_GEN_S);
         glDisable(GL_TEXTURE_GEN_T);
-        glPopMatrix();
-    }
+        glPopMatrix();    
 
-    // draw the wire cube to show connection for vertices of unit cell
-    glPushMatrix();
-    glTranslatef(2*r, 2*r, 2*r);
-    glutWireCube(2*r);
-    glPopMatrix();
-
-    // top back right
-    for(int i=0; i<8; i++)
-    {
+        // top back right
         glPushMatrix();
         gluQuadricOrientation(q, GLU_OUTSIDE);
         glEnable(GL_TEXTURE_GEN_S);
@@ -655,19 +631,9 @@ void drawHeusler(GLUquadric *q, Material sMaterials[], GLfloat radius)
         sMaterials[0].stopMaterial();
         glDisable(GL_TEXTURE_GEN_S);
         glDisable(GL_TEXTURE_GEN_T);
-        glPopMatrix();
-    }
+        glPopMatrix();   
 
-    // draw the wire cube to show connection for vertices of unit cell
-    glPushMatrix();
-    glTranslatef(r, r, r);
-    glColor3f(1.0, 0.0, 0.0);
-    glutWireCube(2*r);
-    glPopMatrix();
-
-    // middle 
-    for(int i=0; i<8; i++)
-    {
+        // middle 
         glPushMatrix();
         gluQuadricOrientation(q, GLU_OUTSIDE);
         glEnable(GL_TEXTURE_GEN_S);

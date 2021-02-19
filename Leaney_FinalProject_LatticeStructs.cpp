@@ -46,7 +46,7 @@ GLsizei windowHeight = 400;
 
 Material ground;
 Material sky;
-Material sphereMaterials[2];
+Material sphereMaterials[3];
 GLUquadric *q;                  // used for designing spheres
 
 Camera avatarPOV;
@@ -71,9 +71,9 @@ int main(int argc, char** argv)
 
     ground.load("Textures/Concrete1.tga");
     sky.load("Textures/Sky1.tga");
-    sphereMaterials[0].load("Textures/Marble1.tga");
-    sphereMaterials[1].load("Textures/Wood1.tga");
-    
+    sphereMaterials[0].load("Textures/Wood1.tga");
+    sphereMaterials[1].load("Textures/Marble1.tga");
+    sphereMaterials[2].load("Textures/Ground3.tga");
 
     q = gluNewQuadric();                // Allocates the memory for a new quadric
     gluQuadricNormals(q, GLU_SMOOTH);   // Generate smooth normals for the quadric

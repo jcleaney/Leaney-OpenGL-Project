@@ -149,9 +149,6 @@ void enableLights()
 
 void reshape(GLsizei width, GLsizei height)
 {
-    //blEnableLights = !blEnableLights;
-    //enableLights();
-
     if (height <= 0) height = 1;        // Sanity
     if (width <= 0) width = 1;          // Sanity
     windowWidth = width;
@@ -341,25 +338,37 @@ void keyboardClick(unsigned char key, int x, int y)
         case 'q': case 'Q': case 27:
             exit(EXIT_SUCCESS);
             break;
-        case 'L':
+        case 'l': case 'L':
             blEnableLights = !blEnableLights;
             break; 
         case 'r': case 'R':
             resetScene();
             break;
-        case 'w':
+        case 'w': case 'W':
             avatarPOV.moveForward(0.5f);
             break;
-        case 's':
+        case 's': case 'S':
             avatarPOV.moveBackward(0.5f);
             break;
-        case 'a':
+        case 'a': case 'A':
             avatarPOV.strafeLeft(0.5f);
             break;
-        case 'd':
+        case 'd': case 'D':
             avatarPOV.strafeRight(0.5f);
             break;
-        case 'c': // b and B will be used for the BCC structure
+        case 'h': case 'H':
+            avatarPOV.moveUp(0.1f);
+            break;
+        case 'n': case 'N':
+            avatarPOV.moveDown(0.1f);
+            break;
+        case 'b': case 'B':
+            avatarPOV.turnLeft();
+            break;
+        case 'm': case 'M':
+            avatarPOV.turnRight();
+            break;
+        case '1': // 1 will be used for the BCC structure
             cubicEnable = !cubicEnable;
             bccEnable = false;
             fccEnable = false;
@@ -367,15 +376,7 @@ void keyboardClick(unsigned char key, int x, int y)
             heuslerEnable = false;
             radius = 0.5f;
             break;
-        case 'C':
-            cubicEnable = !cubicEnable;
-            bccEnable = false;
-            fccEnable = false;
-            dmndEnable = false;
-            heuslerEnable = false;
-            radius = 1.0f;
-            break;
-        case 'b': // b and B will be used for the BCC structure
+        case '2': // 2 will be used for the BCC structure
             cubicEnable = false;
             bccEnable = !bccEnable;
             fccEnable = false;
@@ -383,15 +384,7 @@ void keyboardClick(unsigned char key, int x, int y)
             heuslerEnable = false;
             radius = 0.5f;
             break;
-        case 'B':
-            cubicEnable = false;
-            bccEnable = !bccEnable;
-            fccEnable = false;
-            dmndEnable = false;
-            heuslerEnable = false;
-            radius = 1.0f;
-            break;
-        case 'f': // f and F will be used for the FCC structure
+        case '3': // 3 will be used for the FCC structure
             cubicEnable = false;
             bccEnable = false;
             fccEnable = !fccEnable;
@@ -399,15 +392,7 @@ void keyboardClick(unsigned char key, int x, int y)
             heuslerEnable = false;
             radius = 0.5f;
             break;
-        case 'F':
-            cubicEnable = false;
-            bccEnable = false;
-            fccEnable = !fccEnable;
-            dmndEnable = false;
-            heuslerEnable = false;
-            radius = 1.0f;
-            break;
-        case 'z': // z and Z will be used for the Diamond structure
+        case '4': // 4 will be used for the Diamond structure
             cubicEnable = false;
             bccEnable = false;
             fccEnable = false;
@@ -415,29 +400,13 @@ void keyboardClick(unsigned char key, int x, int y)
             heuslerEnable = false;
             radius = 0.5f;
             break;
-        case 'Z':
-            cubicEnable = false;
-            bccEnable = false;
-            fccEnable = false;
-            dmndEnable = !dmndEnable;
-            heuslerEnable = false;
-            radius = 1.0f;
-            break;
-        case 'h': // z and Z will be used for the Diamond structure
+        case '5': // 5 will be used for the Diamond structure
             cubicEnable = false;
             bccEnable = false;
             fccEnable = false;
             dmndEnable = false;
             heuslerEnable = !heuslerEnable;
             radius = 0.5f;
-            break;
-        case 'H':
-            cubicEnable = false;
-            bccEnable = false;
-            fccEnable = false;
-            dmndEnable = false;
-            heuslerEnable = !heuslerEnable;
-            radius = 1.0f;
             break;
         case 'p': case 'P': // p is used to pause the rotation of the lattice structures to make better observations
             pauseRotation = !pauseRotation;
@@ -460,18 +429,16 @@ void specialInput(int key, int x, int y)
     switch(key)
     {
         case GLUT_KEY_UP:
-            radius = radius + 0.1;
-            if (radius > 5.0) radius = 5.0;
+            avatarPOV.moveForward(0.5f);
             break;
         case GLUT_KEY_DOWN:
-            radius = radius - 0.1;
-            if (radius < 0.1) radius = 0.1;
+            avatarPOV.moveBackward(0.5f);
             break;
         case GLUT_KEY_LEFT:
-            avatarPOV.turnLeft();
+            avatarPOV.strafeLeft(0.5f);
             break;
         case GLUT_KEY_RIGHT:
-            avatarPOV.turnRight();
+            avatarPOV.strafeRight(0.5f);
             break;
     }
     glutPostRedisplay();
@@ -495,15 +462,19 @@ void mouseClick(int button, int state, int x, int y)
         if(state == GLUT_DOWN) blMouseCenterDown = true;
         else blMouseCenterDown = false;
     }
-    // adding in scrolling for raising and lowering the cameraPOV
+    
+    // adding in scrolling for scaling of the unit cells
     if(button == 3)
     {
-        avatarPOV.moveDown(0.1f);
+        radius = radius - 0.1;
+        if (radius < 0.1) radius = 0.1;
     }
     if(button == 4)
     {
-        avatarPOV.moveUp(0.1f);
+        radius = radius + 0.1;
+        if (radius > 5.0) radius = 5.0;
     }
+    
     // Right Button Test
     if(button == GLUT_RIGHT_BUTTON)
     {

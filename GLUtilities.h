@@ -29,6 +29,7 @@ void drawCubic(GLUquadric *q, Material sMaterials[], GLfloat radius);
 void drawBCC(GLUquadric *q, Material sMaterials[], GLfloat radius);
 void drawFCC(GLUquadric *q, Material sMaterials[], GLfloat radius);
 void drawZnBlnd(GLUquadric *q, Material sMaterials[], GLfloat radius);
-
+void drawHeusler(GLUquadric *q, Material sMaterials[], GLfloat radius);
+void placeCubic(GLUquadric *q, Material sMaterials[], GLfloat radius);
 
 #endif //GL_UTILITIES_H_

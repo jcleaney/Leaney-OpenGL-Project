@@ -647,3 +647,39 @@ void drawHeusler(GLUquadric *q, Material sMaterials[], GLfloat radius)
         glPopMatrix();
     }
 }
+
+
+// function for drawing the Simple Cubic lattice
+void placeCubic(GLUquadric *q, Material sMaterials[], GLfloat radius)
+{
+    GLfloat r = radius*2.0f;
+    
+    // assign the vertices of a cube to a multidimensional array to be used for drawing
+    GLfloat vertices[8][3] =    {   {  r,  r,  r }, // v0 
+                                    { -r,  r,  r }, // v1 
+                                    { -r, -r,  r }, // v2 
+                                    {  r, -r,  r }, // v3 
+                                    {  r, -r, -r }, // v4 
+                                    {  r,  r, -r }, // v5 
+                                    { -r,  r, -r }, // v6 
+                                    { -r, -r, -r }  // v7
+                                };
+    // draw the wire cube to show connection for vertices of unit cell
+    glPushMatrix();
+    glutWireCube(2*r);
+    glPopMatrix();
+
+    // Using a loop to draw all the spheres at the vertices to simplify program
+    for(int i=0; i<8; i++)
+    {
+        glPushMatrix();
+        gluQuadricOrientation(q, GLU_OUTSIDE);
+        glEnable(GL_TEXTURE_GEN_S);
+        glEnable(GL_TEXTURE_GEN_T);
+        glTranslatef(vertices[i][0], vertices[i][1], vertices[i][2]);
+        glutWireSphere(radius, 24, 48);
+        glDisable(GL_TEXTURE_GEN_S);
+        glDisable(GL_TEXTURE_GEN_T);
+        glPopMatrix();
+    }
+}

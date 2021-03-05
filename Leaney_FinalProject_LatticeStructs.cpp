@@ -6,6 +6,7 @@
 #include "GLUtilities.h"
 #include "Camera.h"
 #include "Material.h"
+#include "PlaceableSpheres.h"
 
 //Function Prototypes
 void resetScene();
@@ -16,6 +17,7 @@ void drawBCC(GLUquadric *q, Material sMaterials[], GLfloat radius);
 void drawFCC(GLUquadric *q, Material sMaterials[], GLfloat radius);
 void drawZnBlnd(GLUquadric *q, Material sMaterials[], GLfloat radius);
 void drawHeusler(GLUquadric *q, Material sMaterials[], GLfloat radius);
+void placeCubic(GLUquadric *q, Material sMaterials[], GLfloat radius);
 void reshape(GLsizei width, GLsizei height);            // use GLsizei makes it consistent across all platforms
 void keyboardClick(unsigned char key, int x, int y);    // callback function with multiple arguments for keyboard pressed
 void specialInput(int key, int x, int y);               // callback for special inputs that are not recognized in GLUT
@@ -24,18 +26,20 @@ void mouseMotion(int x, int y);
 void timer(int ms);                                     // unit is integer for milliseconds
 
 
-bool blEnableLights;                // Are the lights on or off?
-bool cubicEnable;                   // Are we displaying the Simple Cubic structure?
-bool bccEnable;                     // Are we displaying the BCC structure?
-bool fccEnable;                     // Are we displaying the FCC structure?
-bool dmndEnable;                    // Are we displaying the Diamond (Zinc-blende) crystal lattice?
-bool heuslerEnable;                 // Are we displaying the Heusler Alloy crystal structure?
-bool pauseRotation;                 // Check for paused rotation
-GLfloat radius;                     // radius of the spheres being used
-GLfloat locationX, locationY;       // Current Location of the object
-GLfloat rotationX, rotationY;       // Current rotation of the object
-int objectRotation;                 // Rotation in degrees
-GLsizei prevMouseX, prevMouseY;     // Current mouse location in the window
+bool blEnableLights;                        // Are the lights on or off?
+bool cubicEnable;                           // Are we displaying the Simple Cubic structure?
+bool bccEnable;                             // Are we displaying the BCC structure?
+bool fccEnable;                             // Are we displaying the FCC structure?
+bool dmndEnable;                            // Are we displaying the Diamond (Zinc-blende) crystal lattice?
+bool heuslerEnable;                         // Are we displaying the Heusler Alloy crystal structure?
+bool placeSpheres;                          // Are we going to place the spheres instead of see them in correct positions?
+bool pauseRotation;                         // Check for paused rotation
+GLfloat radius;                             // radius of the spheres being used
+GLfloat locationX, locationY, locationZ;    // Current Location of the object
+GLfloat rotationX, rotationY;               // Current rotation of the object
+int objectRotation;                         // Rotation in degrees
+int currentID;
+GLsizei prevMouseX, prevMouseY;             // Current mouse location in the window
 
 bool blMouseLeftDown;               // Current State of the Left button 
 bool blMouseCenterDown;             // Current State of the Center button
@@ -50,6 +54,8 @@ Material sphereMaterials[3];
 GLUquadric *q;                  // used for designing spheres
 
 Camera avatarPOV;
+PlaceableSpheres spheres;
+//PlaceableSpheres *spheres;
 
 int main(int argc, char** argv)
 {
@@ -58,7 +64,7 @@ int main(int argc, char** argv)
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_DEPTH);
     glutInitWindowSize(windowWidth, windowHeight);      // Set the window's initial width and height
     glutInitWindowPosition(50, 50);                     // Position the window initial top
-    glutCreateWindow("Material Physics - Final Project!!");             // Go ahead and create the window
+    glutCreateWindow("Material Physics Research Project!!");             // Go ahead and create the window
 
     //Callback Functions
     glutDisplayFunc(&display);          // Set the display function to use 
@@ -98,17 +104,19 @@ void resetScene()
     dmndEnable = false;
     heuslerEnable = false;
     pauseRotation = false;
+    placeSpheres = false;
     radius = 0.0f;
     locationX = 0.0;
     locationY = 0.0;
     rotationX = 0.0;
     rotationY = 0.0;
     objectRotation = 0;
+    currentID = 0;
     prevMouseX = 0;
     prevMouseY = 0;
     blMouseLeftDown = false;        
     blMouseCenterDown = false;     
-    blMouseRightDown = false;      
+    blMouseRightDown = false; 
     
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);   // set the background color to black and opaque
 
@@ -328,6 +336,40 @@ void display(void)
         glPopMatrix();
     }
 
+    if(placeSpheres)
+    {
+        glPushMatrix();
+        //glRotatef(objectRotation, 0.0f, 1.0f, 0.0f);
+        glTranslatef(0.0f, 2*radius, 0.0f);
+        spheres.placeCubic(q, sphereMaterials, radius, currentID);
+        //spheres[currentID].placeCubic(q, sphereMaterials, radius, currentID);
+        glPopMatrix();
+
+        // Now draw corner texts
+        glPushMatrix();
+        glMatrixMode(GL_PROJECTION);        // referencing the screen. Projection = screen = Rasta 
+        glLoadIdentity();
+        glViewport(0, 0, windowWidth, windowHeight);
+        gluOrtho2D(0.0f, (GLfloat)windowWidth, 0.0f, (GLfloat)windowHeight);
+        glMatrixMode(GL_MODELVIEW);
+        glLoadIdentity();
+        glColor3f(1.0f, 1.0f, 1.0f);
+        
+        strcpy(text, "Placing the Simple Cubic Lattice");
+        textWidth = getBitmapTextWidth(text, GLUT_BITMAP_TIMES_ROMAN_24);
+        drawBitmapText(text, GLUT_BITMAP_TIMES_ROMAN_24, windowWidth-textWidth-6.0f, windowHeight-24.0f);
+        glPopMatrix();
+
+    /*
+        if(spheres[currentID].checkLocation() == true)
+        {
+            //increment the id so that we move on to the next sphere and create a new one (i++);
+            // maybe a global ID could be good for this
+            currentID++;
+        }
+    */
+    }
+    
     glutSwapBuffers();    
 } 
 
@@ -338,7 +380,7 @@ void keyboardClick(unsigned char key, int x, int y)
         case 'q': case 'Q': case 27:
             exit(EXIT_SUCCESS);
             break;
-        case 'l': case 'L':
+        case 'L':
             blEnableLights = !blEnableLights;
             break; 
         case 'r': case 'R':
@@ -368,12 +410,37 @@ void keyboardClick(unsigned char key, int x, int y)
         case 'm': case 'M':
             avatarPOV.turnRight();
             break;
+        case 'u':
+            spheres.movePosX(0.1f);
+            //spheres[currentID].movePosX(0.1f);
+            break;
+        case 'j':
+            spheres.movePosX(-0.1f);
+            //spheres[currentID].movePosX(-0.1f);
+            break;
+        case 'i':
+            spheres.movePosY(0.1f);
+            //spheres[currentID].movePosY(0.1f);
+            break;
+        case 'k': 
+            spheres.movePosY(-0.1);
+            //spheres[currentID].movePosY(-0.1);
+            break;
+        case 'o':
+            spheres.movePosZ(0.1);
+            //spheres[currentID].movePosZ(0.1);
+            break;
+        case 'l':
+            spheres.movePosZ(-0.1);
+            //spheres[currentID].movePosZ(-0.1);
+            break;
         case '1': // 1 will be used for the BCC structure
             cubicEnable = !cubicEnable;
             bccEnable = false;
             fccEnable = false;
             dmndEnable = false;
             heuslerEnable = false;
+            placeSpheres = false;
             radius = 0.5f;
             break;
         case '2': // 2 will be used for the BCC structure
@@ -382,6 +449,7 @@ void keyboardClick(unsigned char key, int x, int y)
             fccEnable = false;
             dmndEnable = false;
             heuslerEnable = false;
+            placeSpheres = false;
             radius = 0.5f;
             break;
         case '3': // 3 will be used for the FCC structure
@@ -390,6 +458,7 @@ void keyboardClick(unsigned char key, int x, int y)
             fccEnable = !fccEnable;
             dmndEnable = false;
             heuslerEnable = false;
+            placeSpheres = false;
             radius = 0.5f;
             break;
         case '4': // 4 will be used for the Diamond structure
@@ -398,6 +467,7 @@ void keyboardClick(unsigned char key, int x, int y)
             fccEnable = false;
             dmndEnable = !dmndEnable;
             heuslerEnable = false;
+            placeSpheres = false;
             radius = 0.5f;
             break;
         case '5': // 5 will be used for the Diamond structure
@@ -406,16 +476,26 @@ void keyboardClick(unsigned char key, int x, int y)
             fccEnable = false;
             dmndEnable = false;
             heuslerEnable = !heuslerEnable;
+            placeSpheres = false;
+            radius = 0.5f;
+            break;
+        case 'e':
+            cubicEnable = false;
+            bccEnable = false;
+            fccEnable = false;
+            dmndEnable = false;
+            heuslerEnable = false;
+            placeSpheres = !placeSpheres;
             radius = 0.5f;
             break;
         case 'p': case 'P': // p is used to pause the rotation of the lattice structures to make better observations
             pauseRotation = !pauseRotation;
             break;
-        case 'i':
+        case 'x':
             radius = radius + 0.1;
             if (radius > 5.0) radius = 5.0;
             break;
-        case 'u':
+        case 'z':
             radius = radius - 0.1;
             if (radius < 0.1) radius = 0.1;
             break;
@@ -487,7 +567,6 @@ void mouseClick(int button, int state, int x, int y)
 
 void mouseMotion(int x, int y)
 {
-    //START HERE!!
     //cout << "x=" << x << " y=" << y << endl;
     if (blMouseLeftDown)
     {
@@ -506,8 +585,8 @@ void mouseMotion(int x, int y)
         if(prevMouseY > y) avatarPOV.moveForward(0.3f);   
         if(prevMouseY < y) avatarPOV.moveBackward(0.3f);
 
-        locationX += 10.0 * (x-prevMouseX) / windowWidth;
-        locationY -= 10.0 * (y-prevMouseY) / windowHeight;
+        //locationX += 10.0 * (x-prevMouseX) / windowWidth;
+        //locationY -= 10.0 * (y-prevMouseY) / windowHeight;
     }
     
     prevMouseX = x;

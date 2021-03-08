@@ -26,7 +26,7 @@ class PlaceableSpheres
         GLfloat radius;
         bool correctLocation;
         int sphereID;
-    public:        
+    public:       
         // Default constructor.
 	    PlaceableSpheres();
 
@@ -36,27 +36,28 @@ class PlaceableSpheres
 	    // Set the sphere defaults.
 	    void reset();
 
-        // set the default materials
-        void loadMaterials();
-
         // accessor functions
         inline void movePosX(GLfloat x) {positionX += x;}
         inline void movePosY(GLfloat y) {positionY += y;}
         inline void movePosZ(GLfloat z) {positionZ += z;}
+        inline void setRadius(GLfloat r) {radius = r;}
         inline void setSphereID(int a) {sphereID = a;}
-        inline void setRadius(int r) {radius = r;}
+        inline void setCorrectLocation(bool yn) {correctLocation = yn;}
 
         inline GLfloat getPosX() {return positionX;}
         inline GLfloat getPosY() {return positionY;}
         inline GLfloat getPosZ() {return positionZ;}
         inline GLfloat getRadius() {return radius;}
-        inline bool getCorrectLocation() {return correctLocation;}
         inline int getSphereID() {return sphereID;}
+        inline bool getCorrectLocation() {return correctLocation;}
 
         // drawing functions
-        void placeCubic(GLUquadric *q, Material sMaterials[], GLfloat radius, int id);
-        void placeSphere(GLUquadric *q, Material sMaterials[], GLfloat radius, int id);
-        bool checkLocation();
+        void placeCubic(GLUquadric *q, Material sMaterials[], GLfloat radius);
+        void placeSphere(GLUquadric *q, Material sMaterials[], GLfloat radius);
+        
+        // checking location functions
+        void checkLocation(GLfloat myArray[][3]);
+        void storeLocation(GLfloat newArray[][3]);
 };
 
 #endif //_PLACEABLESPHERES_H_

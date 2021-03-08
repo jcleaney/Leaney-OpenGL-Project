@@ -97,6 +97,7 @@ void resetScene()
     avatarPOV.reset();
     avatarPOV.setLocation(0.0f, 0.0f, -7.0f);
     avatarPOV.setRotation(0.0f, 0.0f, 1.0f);
+    spheres.reset();
     blEnableLights = false;
     cubicEnable = false;
     bccEnable = false;
@@ -176,6 +177,7 @@ void display(void)
     avatarPOV.runCamera();
     enableLights();
     char text[81];
+    char text2[81];
     GLfloat textWidth = 0.0f;
 
     // Clear out the color and bufferbit 
@@ -339,9 +341,8 @@ void display(void)
     if(placeSpheres)
     {
         glPushMatrix();
-        //glRotatef(objectRotation, 0.0f, 1.0f, 0.0f);
         glTranslatef(0.0f, 2*radius, 0.0f);
-        spheres.placeCubic(q, sphereMaterials, radius, currentID);
+        spheres.placeCubic(q, sphereMaterials, radius);
         //spheres[currentID].placeCubic(q, sphereMaterials, radius, currentID);
         glPopMatrix();
 
@@ -358,16 +359,19 @@ void display(void)
         strcpy(text, "Placing the Simple Cubic Lattice");
         textWidth = getBitmapTextWidth(text, GLUT_BITMAP_TIMES_ROMAN_24);
         drawBitmapText(text, GLUT_BITMAP_TIMES_ROMAN_24, windowWidth-textWidth-6.0f, windowHeight-24.0f);
-        glPopMatrix();
 
-    /*
-        if(spheres[currentID].checkLocation() == true)
+        if(spheres.getCorrectLocation())
         {
-            //increment the id so that we move on to the next sphere and create a new one (i++);
-            // maybe a global ID could be good for this
-            currentID++;
+            strcpy(text2, "True");
+            textWidth = getBitmapTextWidth(text2, GLUT_BITMAP_TIMES_ROMAN_24);
+            drawBitmapText(text2, GLUT_BITMAP_TIMES_ROMAN_24, windowWidth-textWidth-6.0f, windowHeight-200.0f);
+        } else {
+            strcpy(text2, "False");
+            textWidth = getBitmapTextWidth(text2, GLUT_BITMAP_TIMES_ROMAN_24);
+            drawBitmapText(text2, GLUT_BITMAP_TIMES_ROMAN_24, windowWidth-textWidth-6.0f, windowHeight-200.0f);
         }
-    */
+            
+        glPopMatrix();
     }
     
     glutSwapBuffers();    

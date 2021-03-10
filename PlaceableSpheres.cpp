@@ -128,9 +128,9 @@ void PlaceableSpheres::checkLocation(GLfloat myArray[][3])
     GLfloat xLoc = round(10*getPosX())/10;
     GLfloat yLoc = round(10*getPosY())/10;
     GLfloat zLoc = round(10*getPosZ())/10;
-    GLfloat xStoreLoc;
-    GLfloat yStoreLoc;
-    GLfloat zStoreLoc;
+    GLfloat xStoreLoc = 0;
+    GLfloat yStoreLoc = 0;
+    GLfloat zStoreLoc = 0;
     
     setCorrectLocation(correctL);
 

@@ -360,6 +360,7 @@ void display(void)
         textWidth = getBitmapTextWidth(text, GLUT_BITMAP_TIMES_ROMAN_24);
         drawBitmapText(text, GLUT_BITMAP_TIMES_ROMAN_24, windowWidth-textWidth-6.0f, windowHeight-24.0f);
 
+        /*
         if(spheres.getCorrectLocation())
         {
             strcpy(text2, "True");
@@ -370,6 +371,7 @@ void display(void)
             textWidth = getBitmapTextWidth(text2, GLUT_BITMAP_TIMES_ROMAN_24);
             drawBitmapText(text2, GLUT_BITMAP_TIMES_ROMAN_24, windowWidth-textWidth-6.0f, windowHeight-200.0f);
         }
+        */
             
         glPopMatrix();
     }

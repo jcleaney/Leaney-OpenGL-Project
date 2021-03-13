@@ -1,7 +1,7 @@
 //Project Name: Leaney_FinalProject_LatticeStructs.cpp
 //Description: Developing openGL to display Unit Cells!
 //Author: Joshua Leaney
-//Date Last Modified: 12/7/20
+//Date Last Modified: 03/14/21
 
 #include "GLUtilities.h"
 #include "Camera.h"
@@ -26,36 +26,38 @@ void mouseMotion(int x, int y);
 void timer(int ms);                                     // unit is integer for milliseconds
 
 
-bool blEnableLights;                        // Are the lights on or off?
-bool cubicEnable;                           // Are we displaying the Simple Cubic structure?
-bool bccEnable;                             // Are we displaying the BCC structure?
-bool fccEnable;                             // Are we displaying the FCC structure?
-bool dmndEnable;                            // Are we displaying the Diamond (Zinc-blende) crystal lattice?
-bool heuslerEnable;                         // Are we displaying the Heusler Alloy crystal structure?
-bool placeSpheres;                          // Are we going to place the spheres instead of see them in correct positions?
-bool pauseRotation;                         // Check for paused rotation
+bool blEnableLights;    // Are the lights on or off?
+bool cubicEnable;       // Are we displaying the Simple Cubic structure?
+bool bccEnable;         // Are we displaying the BCC structure?
+bool fccEnable;         // Are we displaying the FCC structure?
+bool dmndEnable;        // Are we displaying the Diamond (Zinc-blende) crystal lattice?
+bool heuslerEnable;     // Are we displaying the Heusler Alloy crystal structure?
+bool placeSpheres;      // Are we going to place the spheres instead of see them in correct positions?
+bool pauseRotation;     // Check for paused rotation
+bool blMouseLeftDown;   // Current State of the Left button 
+bool blMouseCenterDown; // Current State of the Center button
+bool blMouseRightDown;  // Current State of the Right button
+
 GLfloat radius;                             // radius of the spheres being used
 GLfloat locationX, locationY, locationZ;    // Current Location of the object
 GLfloat rotationX, rotationY;               // Current rotation of the object
-int objectRotation;                         // Rotation in degrees
-int currentID;
-GLsizei prevMouseX, prevMouseY;             // Current mouse location in the window
 
-bool blMouseLeftDown;               // Current State of the Left button 
-bool blMouseCenterDown;             // Current State of the Center button
-bool blMouseRightDown;              // Current State of the Right button
+int objectRotation; // Rotation in degrees
+int currentID;      // which structure is being selected for placing objects
 
-GLsizei windowWidth = 640;
-GLsizei windowHeight = 400;
 
-Material ground;
-Material sky;
-Material sphereMaterials[3];
+
+GLsizei prevMouseX, prevMouseY; // Current mouse location in the window
+GLsizei windowWidth = 640;      // set the window width
+GLsizei windowHeight = 400;     // set the window height
+
+Material ground;                // material for the ground displayed in scene
+Material sky;                   // material for the sky displayed in scene
+Material sphereMaterials[3];    // material for the spheres displayed in scene
 GLUquadric *q;                  // used for designing spheres
 
-Camera avatarPOV;
-PlaceableSpheres spheres;
-//PlaceableSpheres *spheres;
+Camera avatarPOV;               // add a class for camera movement
+PlaceableSpheres spheres[3];    // add a class in order to control placing spheres
 
 int main(int argc, char** argv)
 {
@@ -97,7 +99,6 @@ void resetScene()
     avatarPOV.reset();
     avatarPOV.setLocation(0.0f, 0.0f, -7.0f);
     avatarPOV.setRotation(0.0f, 0.0f, 1.0f);
-    spheres.reset();
     blEnableLights = false;
     cubicEnable = false;
     bccEnable = false;
@@ -106,6 +107,10 @@ void resetScene()
     heuslerEnable = false;
     pauseRotation = false;
     placeSpheres = false;
+    spheres[0].reset();
+    spheres[1].reset();
+    spheres[2].reset(); 
+
     radius = 0.0f;
     locationX = 0.0;
     locationY = 0.0;
@@ -177,7 +182,6 @@ void display(void)
     avatarPOV.runCamera();
     enableLights();
     char text[81];
-    char text2[81];
     GLfloat textWidth = 0.0f;
 
     // Clear out the color and bufferbit 
@@ -220,80 +224,147 @@ void display(void)
     
     if(cubicEnable) 
     {
-        glPushMatrix();
-        glRotatef(objectRotation, 0.0f, 1.0f, 0.0f);
-        glTranslatef(0.0f, 2*radius, 0.0f);
-        drawCubic(q, sphereMaterials, radius);
-        glPopMatrix();
-        
-        // Now draw corner texts
-        glPushMatrix();
-        glMatrixMode(GL_PROJECTION);        // referencing the screen. Projection = screen = Rasta 
-        glLoadIdentity();
-        glViewport(0, 0, windowWidth, windowHeight);
-        gluOrtho2D(0.0f, (GLfloat)windowWidth, 0.0f, (GLfloat)windowHeight);
-        glMatrixMode(GL_MODELVIEW);
-        glLoadIdentity();
-        glColor3f(1.0f, 1.0f, 1.0f);
-        
-        strcpy(text, "Simple Cubic Lattice Displayed");
-        textWidth = getBitmapTextWidth(text, GLUT_BITMAP_TIMES_ROMAN_24);
-        drawBitmapText(text, GLUT_BITMAP_TIMES_ROMAN_24, windowWidth-textWidth-6.0f, windowHeight-24.0f);
-        glPopMatrix();
+        // added to allow placement of cubic
+        if(placeSpheres)
+        {
+            glPushMatrix();
+            spheres[currentID-1].placeCubic(q, sphereMaterials, radius);
+            glPopMatrix();
+
+            // Now draw corner texts
+            glPushMatrix();
+            glMatrixMode(GL_PROJECTION);        // referencing the screen. Projection = screen = Rasta 
+            glLoadIdentity();
+            glViewport(0, 0, windowWidth, windowHeight);
+            gluOrtho2D(0.0f, (GLfloat)windowWidth, 0.0f, (GLfloat)windowHeight);
+            glMatrixMode(GL_MODELVIEW);
+            glLoadIdentity();
+            glColor3f(1.0f, 1.0f, 1.0f);
+            
+            strcpy(text, "Placing the Simple Cubic Lattice");
+            textWidth = getBitmapTextWidth(text, GLUT_BITMAP_TIMES_ROMAN_24);
+            drawBitmapText(text, GLUT_BITMAP_TIMES_ROMAN_24, windowWidth-textWidth-6.0f, windowHeight-24.0f);
+            glPopMatrix();
+        } else{
+            glPushMatrix();
+            glRotatef(objectRotation, 0.0f, 1.0f, 0.0f);
+            drawCubic(q, sphereMaterials, radius);
+            glPopMatrix();
+            
+            // Now draw corner texts
+            glPushMatrix();
+            glMatrixMode(GL_PROJECTION);        // referencing the screen. Projection = screen = Rasta 
+            glLoadIdentity();
+            glViewport(0, 0, windowWidth, windowHeight);
+            gluOrtho2D(0.0f, (GLfloat)windowWidth, 0.0f, (GLfloat)windowHeight);
+            glMatrixMode(GL_MODELVIEW);
+            glLoadIdentity();
+            glColor3f(1.0f, 1.0f, 1.0f);
+            
+            strcpy(text, "Simple Cubic Lattice Displayed");
+            textWidth = getBitmapTextWidth(text, GLUT_BITMAP_TIMES_ROMAN_24);
+            drawBitmapText(text, GLUT_BITMAP_TIMES_ROMAN_24, windowWidth-textWidth-6.0f, windowHeight-24.0f);
+            glPopMatrix();
+        }
     }
 
     if(bccEnable) 
     {
-        glPushMatrix();
-        glRotatef(objectRotation, 0.0f, 1.0f, 0.0f);
-        drawBCC(q, sphereMaterials, radius);
-        glPopMatrix();
+        // added to allow placement of bcc
+        if(placeSpheres)
+        {
+            glPushMatrix();
+            spheres[currentID-1].placeBCC(q, sphereMaterials, radius);
+            glPopMatrix();
+
+            // Now draw corner texts
+            glPushMatrix();
+            glMatrixMode(GL_PROJECTION);        // referencing the screen. Projection = screen = Rasta 
+            glLoadIdentity();
+            glViewport(0, 0, windowWidth, windowHeight);
+            gluOrtho2D(0.0f, (GLfloat)windowWidth, 0.0f, (GLfloat)windowHeight);
+            glMatrixMode(GL_MODELVIEW);
+            glLoadIdentity();
+            glColor3f(1.0f, 1.0f, 1.0f);
+            
+            strcpy(text, "Placing the Body-Centered Cubic Lattice");
+            textWidth = getBitmapTextWidth(text, GLUT_BITMAP_TIMES_ROMAN_24);
+            drawBitmapText(text, GLUT_BITMAP_TIMES_ROMAN_24, windowWidth-textWidth-6.0f, windowHeight-24.0f);
+            glPopMatrix();
+        } else {
+            glPushMatrix();
+            glRotatef(objectRotation, 0.0f, 1.0f, 0.0f);
+            drawBCC(q, sphereMaterials, radius);
+            glPopMatrix();
+            
+            // Now draw corner texts
+            glPushMatrix();
+            glMatrixMode(GL_PROJECTION);        // referencing the screen. Projection = screen = Rasta 
+            glLoadIdentity();
+            glViewport(0, 0, windowWidth, windowHeight);
+            gluOrtho2D(0.0f, (GLfloat)windowWidth, 0.0f, (GLfloat)windowHeight);
+            glMatrixMode(GL_MODELVIEW);
+            glLoadIdentity();
+            glColor3f(1.0f, 1.0f, 1.0f);
+            
+            strcpy(text, "Body-Centered Cubic Lattice Displayed");
+            textWidth = getBitmapTextWidth(text, GLUT_BITMAP_TIMES_ROMAN_24);
+            drawBitmapText(text, GLUT_BITMAP_TIMES_ROMAN_24, windowWidth-textWidth-6.0f, windowHeight-24.0f);
+            glPopMatrix();
+        }
         
-        // Now draw corner texts
-        glPushMatrix();
-        glMatrixMode(GL_PROJECTION);        // referencing the screen. Projection = screen = Rasta 
-        glLoadIdentity();
-        glViewport(0, 0, windowWidth, windowHeight);
-        gluOrtho2D(0.0f, (GLfloat)windowWidth, 0.0f, (GLfloat)windowHeight);
-        glMatrixMode(GL_MODELVIEW);
-        glLoadIdentity();
-        glColor3f(1.0f, 1.0f, 1.0f);
-        
-        strcpy(text, "Body-Centered Cubic Lattice Displayed");
-        textWidth = getBitmapTextWidth(text, GLUT_BITMAP_TIMES_ROMAN_24);
-        drawBitmapText(text, GLUT_BITMAP_TIMES_ROMAN_24, windowWidth-textWidth-6.0f, windowHeight-24.0f);
-        glPopMatrix();
     }
 
     if(fccEnable) 
     {
-        glPushMatrix();
-        glRotatef(objectRotation, 0.0f, 1.0f, 0.0f);
-        glTranslatef(0.0f, 2*radius, 0.0f);
-        drawFCC(q, sphereMaterials, radius);
-        glPopMatrix();
+        // added to allow placement of fcc
+        if(placeSpheres)
+        {
+            glPushMatrix();
+            spheres[currentID-1].placeFCC(q, sphereMaterials, radius);
+            glPopMatrix();
 
-        // Now draw corner texts
-        glPushMatrix();
-        glMatrixMode(GL_PROJECTION);        // referencing the screen. Projection = screen = Rasta 
-        glLoadIdentity();
-        glViewport(0, 0, windowWidth, windowHeight);
-        gluOrtho2D(0.0f, (GLfloat)windowWidth, 0.0f, (GLfloat)windowHeight);
-        glMatrixMode(GL_MODELVIEW);
-        glLoadIdentity();
-        glColor3f(1.0f, 1.0f, 1.0f);
-        
-        strcpy(text, "Face-Centered Cubic Lattice Displayed");
-        textWidth = getBitmapTextWidth(text, GLUT_BITMAP_TIMES_ROMAN_24);
-        drawBitmapText(text, GLUT_BITMAP_TIMES_ROMAN_24, windowWidth-textWidth-6.0f, windowHeight-24.0f);
-        glPopMatrix();
+            // Now draw corner texts
+            glPushMatrix();
+            glMatrixMode(GL_PROJECTION);        // referencing the screen. Projection = screen = Rasta 
+            glLoadIdentity();
+            glViewport(0, 0, windowWidth, windowHeight);
+            gluOrtho2D(0.0f, (GLfloat)windowWidth, 0.0f, (GLfloat)windowHeight);
+            glMatrixMode(GL_MODELVIEW);
+            glLoadIdentity();
+            glColor3f(1.0f, 1.0f, 1.0f);
+            
+            strcpy(text, "Placing the Face-Centered Cubic Lattice");
+            textWidth = getBitmapTextWidth(text, GLUT_BITMAP_TIMES_ROMAN_24);
+            drawBitmapText(text, GLUT_BITMAP_TIMES_ROMAN_24, windowWidth-textWidth-6.0f, windowHeight-24.0f);
+            glPopMatrix();
+        } else {
+            glPushMatrix();
+            glRotatef(objectRotation, 0.0f, 1.0f, 0.0f);
+            drawFCC(q, sphereMaterials, radius);
+            glPopMatrix();
+
+            // Now draw corner texts
+            glPushMatrix();
+            glMatrixMode(GL_PROJECTION);        // referencing the screen. Projection = screen = Rasta 
+            glLoadIdentity();
+            glViewport(0, 0, windowWidth, windowHeight);
+            gluOrtho2D(0.0f, (GLfloat)windowWidth, 0.0f, (GLfloat)windowHeight);
+            glMatrixMode(GL_MODELVIEW);
+            glLoadIdentity();
+            glColor3f(1.0f, 1.0f, 1.0f);
+            
+            strcpy(text, "Face-Centered Cubic Lattice Displayed");
+            textWidth = getBitmapTextWidth(text, GLUT_BITMAP_TIMES_ROMAN_24);
+            drawBitmapText(text, GLUT_BITMAP_TIMES_ROMAN_24, windowWidth-textWidth-6.0f, windowHeight-24.0f);
+            glPopMatrix();
+        }
     }
 
     if(dmndEnable) 
     {
         glPushMatrix();
         glRotatef(objectRotation, 0.0f, 1.0f, 0.0f);
-        glTranslatef(0.0f, 2*radius, 0.0f);
         drawZnBlnd(q, sphereMaterials, radius);
         glPopMatrix();
 
@@ -318,7 +389,7 @@ void display(void)
         glPushMatrix();
         glRotatef(objectRotation, 0.0f, 1.0f, 0.0f);
         glTranslatef(-2.0*radius, -2.0*radius, -2.0*radius);
-        glTranslatef(0.0f, 4*radius, 0.0f);
+        glTranslatef(0.0f, 1.5 * radius, 0.0f);
         drawHeusler(q, sphereMaterials, radius);
         glPopMatrix();
         
@@ -335,44 +406,6 @@ void display(void)
         strcpy(text, "Heusler Alloy Displayed");
         textWidth = getBitmapTextWidth(text, GLUT_BITMAP_TIMES_ROMAN_24);
         drawBitmapText(text, GLUT_BITMAP_TIMES_ROMAN_24, windowWidth-textWidth-6.0f, windowHeight-24.0f);
-        glPopMatrix();
-    }
-
-    if(placeSpheres)
-    {
-        glPushMatrix();
-        glTranslatef(0.0f, 2*radius, 0.0f);
-        spheres.placeCubic(q, sphereMaterials, radius);
-        //spheres[currentID].placeCubic(q, sphereMaterials, radius, currentID);
-        glPopMatrix();
-
-        // Now draw corner texts
-        glPushMatrix();
-        glMatrixMode(GL_PROJECTION);        // referencing the screen. Projection = screen = Rasta 
-        glLoadIdentity();
-        glViewport(0, 0, windowWidth, windowHeight);
-        gluOrtho2D(0.0f, (GLfloat)windowWidth, 0.0f, (GLfloat)windowHeight);
-        glMatrixMode(GL_MODELVIEW);
-        glLoadIdentity();
-        glColor3f(1.0f, 1.0f, 1.0f);
-        
-        strcpy(text, "Placing the Simple Cubic Lattice");
-        textWidth = getBitmapTextWidth(text, GLUT_BITMAP_TIMES_ROMAN_24);
-        drawBitmapText(text, GLUT_BITMAP_TIMES_ROMAN_24, windowWidth-textWidth-6.0f, windowHeight-24.0f);
-
-        /*
-        if(spheres.getCorrectLocation())
-        {
-            strcpy(text2, "True");
-            textWidth = getBitmapTextWidth(text2, GLUT_BITMAP_TIMES_ROMAN_24);
-            drawBitmapText(text2, GLUT_BITMAP_TIMES_ROMAN_24, windowWidth-textWidth-6.0f, windowHeight-200.0f);
-        } else {
-            strcpy(text2, "False");
-            textWidth = getBitmapTextWidth(text2, GLUT_BITMAP_TIMES_ROMAN_24);
-            drawBitmapText(text2, GLUT_BITMAP_TIMES_ROMAN_24, windowWidth-textWidth-6.0f, windowHeight-200.0f);
-        }
-        */
-            
         glPopMatrix();
     }
     
@@ -417,28 +450,22 @@ void keyboardClick(unsigned char key, int x, int y)
             avatarPOV.turnRight();
             break;
         case 'u':
-            spheres.movePosX(0.1f);
-            //spheres[currentID].movePosX(0.1f);
+            spheres[currentID-1].movePosX(0.1f);
             break;
         case 'j':
-            spheres.movePosX(-0.1f);
-            //spheres[currentID].movePosX(-0.1f);
+            spheres[currentID-1].movePosX(-0.1f);
             break;
         case 'i':
-            spheres.movePosY(0.1f);
-            //spheres[currentID].movePosY(0.1f);
+            spheres[currentID-1].movePosY(0.1f);
             break;
         case 'k': 
-            spheres.movePosY(-0.1);
-            //spheres[currentID].movePosY(-0.1);
+            spheres[currentID-1].movePosY(-0.1);
             break;
         case 'o':
-            spheres.movePosZ(0.1);
-            //spheres[currentID].movePosZ(0.1);
+            spheres[currentID-1].movePosZ(0.1);
             break;
         case 'l':
-            spheres.movePosZ(-0.1);
-            //spheres[currentID].movePosZ(-0.1);
+            spheres[currentID-1].movePosZ(-0.1);
             break;
         case '1': // 1 will be used for the BCC structure
             cubicEnable = !cubicEnable;
@@ -447,6 +474,7 @@ void keyboardClick(unsigned char key, int x, int y)
             dmndEnable = false;
             heuslerEnable = false;
             placeSpheres = false;
+            currentID = 1;
             radius = 0.5f;
             break;
         case '2': // 2 will be used for the BCC structure
@@ -456,6 +484,7 @@ void keyboardClick(unsigned char key, int x, int y)
             dmndEnable = false;
             heuslerEnable = false;
             placeSpheres = false;
+            currentID = 2;
             radius = 0.5f;
             break;
         case '3': // 3 will be used for the FCC structure
@@ -465,6 +494,7 @@ void keyboardClick(unsigned char key, int x, int y)
             dmndEnable = false;
             heuslerEnable = false;
             placeSpheres = false;
+            currentID = 3;
             radius = 0.5f;
             break;
         case '4': // 4 will be used for the Diamond structure
@@ -486,13 +516,9 @@ void keyboardClick(unsigned char key, int x, int y)
             radius = 0.5f;
             break;
         case 'e':
-            cubicEnable = false;
-            bccEnable = false;
-            fccEnable = false;
-            dmndEnable = false;
-            heuslerEnable = false;
-            placeSpheres = !placeSpheres;
             radius = 0.5f;
+            placeSpheres = !placeSpheres;
+            spheres[currentID].reset();
             break;
         case 'p': case 'P': // p is used to pause the rotation of the lattice structures to make better observations
             pauseRotation = !pauseRotation;
@@ -552,19 +578,24 @@ void mouseClick(int button, int state, int x, int y)
     // adding in scrolling for scaling of the unit cells
     if(button == 3)
     {
-        radius = radius - 0.1;
-        if (radius < 0.1) radius = 0.1;
+        if(placeSpheres == false)
+        {
+            radius = radius - 0.1;
+            if (radius < 0.1) radius = 0.1;
+        }
     }
     if(button == 4)
     {
-        radius = radius + 0.1;
-        if (radius > 5.0) radius = 5.0;
+        if(placeSpheres == false)
+        {
+            radius = radius + 0.1;
+            if (radius > 5.0) radius = 5.0;
+        }
     }
     
     // Right Button Test
     if(button == GLUT_RIGHT_BUTTON)
     {
-        //blMouseRightDown = (state == GLUT_DOWN);
         if(state == GLUT_DOWN) blMouseRightDown = true;
         else blMouseRightDown = false;
     }
@@ -573,7 +604,6 @@ void mouseClick(int button, int state, int x, int y)
 
 void mouseMotion(int x, int y)
 {
-    //cout << "x=" << x << " y=" << y << endl;
     if (blMouseLeftDown)
     {
         if(prevMouseX > x) avatarPOV.turnLeft(1.0f);  
@@ -591,8 +621,6 @@ void mouseMotion(int x, int y)
         if(prevMouseY > y) avatarPOV.moveForward(0.3f);   
         if(prevMouseY < y) avatarPOV.moveBackward(0.3f);
 
-        //locationX += 10.0 * (x-prevMouseX) / windowWidth;
-        //locationY -= 10.0 * (y-prevMouseY) / windowHeight;
     }
     
     prevMouseX = x;
@@ -604,11 +632,9 @@ void mouseMotion(int x, int y)
 void timer(int ms)
 {
     if(!pauseRotation) objectRotation += 1;
-    //rotationX++;
 
     if (objectRotation >= 360) objectRotation = 0;
-    //if (rotationX >= 360.0) rotationX = 0.0f;
-    
+
     glutTimerFunc(ms, &timer, ms);      // redraw every 20ms (50 times per second) 
     glutPostRedisplay();    
 }

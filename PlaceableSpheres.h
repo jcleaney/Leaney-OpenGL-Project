@@ -1,7 +1,7 @@
 // Filename: PlaceableSpheres.h
 // Description: Classes for placeable spheres
 // Author: Joshua Leaney
-// Date Modified: 03/04/2021
+// Date Modified: 03/14/2021
 //
 
 
@@ -25,7 +25,6 @@ class PlaceableSpheres
         GLfloat positionX, positionY, positionZ;
         GLfloat radius;
         bool correctLocation;
-        int sphereID;
     public:       
         // Default constructor.
 	    PlaceableSpheres();
@@ -41,23 +40,24 @@ class PlaceableSpheres
         inline void movePosY(GLfloat y) {positionY += y;}
         inline void movePosZ(GLfloat z) {positionZ += z;}
         inline void setRadius(GLfloat r) {radius = r;}
-        inline void setSphereID(int a) {sphereID = a;}
         inline void setCorrectLocation(bool yn) {correctLocation = yn;}
 
         inline GLfloat getPosX() {return positionX;}
         inline GLfloat getPosY() {return positionY;}
         inline GLfloat getPosZ() {return positionZ;}
         inline GLfloat getRadius() {return radius;}
-        inline int getSphereID() {return sphereID;}
         inline bool getCorrectLocation() {return correctLocation;}
 
         // drawing functions
         void placeCubic(GLUquadric *q, Material sMaterials[], GLfloat radius);
+        void placeBCC(GLUquadric *q, Material sMaterials[], GLfloat radius);
+        void placeFCC(GLUquadric *q, Material sMaterials[], GLfloat radius);
         void placeSphere(GLUquadric *q, Material sMaterials[], GLfloat radius);
         
         // checking location functions
-        void checkLocation(GLfloat myArray[][3]);
-        void storeLocation(GLfloat newArray[][3]);
+        void checkLocation(GLfloat myArray[][3], int arraySize);
+        void storeLocation(GLfloat newArray[][3], int arraySize);
+        void drawArray(GLUquadric *q, Material sMaterials[],  GLfloat radius, GLfloat myArray[][3], int arraySize);
 };
 
 #endif //_PLACEABLESPHERES_H_

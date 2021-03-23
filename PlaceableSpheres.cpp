@@ -286,6 +286,12 @@ void PlaceableSpheres::placeFCC(GLUquadric *q, Material sMaterials[], GLfloat ra
     drawArray(q, sMaterials, radius, checkFaceCoords, 6);
 }
 
+float rndf(float maxnum)
+{
+	double num;
+	num = (double)rand() * 1.0;
+	return (float)((num / (double)RAND_MAX) * maxnum);
+}
 // function for drawing spheres on to scene
 void PlaceableSpheres::placeSphere(GLUquadric *q, Material sMaterials[], GLfloat radius)
 {    
@@ -294,7 +300,12 @@ void PlaceableSpheres::placeSphere(GLUquadric *q, Material sMaterials[], GLfloat
     glEnable(GL_TEXTURE_GEN_S);
     glEnable(GL_TEXTURE_GEN_T);
     glTranslatef(getPosX(), getPosY(), getPosZ());
-    sMaterials[0].setupMaterial();
+    //sMaterials[0].setupMaterial();
+    static GLfloat ramp = 0.7;
+    ramp += 0.001;
+    if (ramp > 0.9) ramp = 0.7;
+    glColor3f(ramp, ramp, ramp);
+
     gluSphere(q, radius, 50, 25);
     sMaterials[0].stopMaterial();
     glDisable(GL_TEXTURE_GEN_S);

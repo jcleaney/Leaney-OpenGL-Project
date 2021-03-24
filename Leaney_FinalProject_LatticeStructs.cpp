@@ -1,7 +1,7 @@
 //Project Name: Leaney_FinalProject_LatticeStructs.cpp
 //Description: Developing openGL to display Unit Cells!
 //Author: Joshua Leaney
-//Date Last Modified: 03/14/21
+//Date Last Modified: 03/24/21
 
 #include "GLUtilities.h"
 #include "Camera.h"
@@ -245,7 +245,7 @@ void display(void)
             textWidth = getBitmapTextWidth(text, GLUT_BITMAP_TIMES_ROMAN_24);
             drawBitmapText(text, GLUT_BITMAP_TIMES_ROMAN_24, windowWidth-textWidth-6.0f, windowHeight-24.0f);
             glPopMatrix();
-        } else{
+        } else {
             glPushMatrix();
             glRotatef(objectRotation, 0.0f, 1.0f, 0.0f);
             drawCubic(q, sphereMaterials, radius);

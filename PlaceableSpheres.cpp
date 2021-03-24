@@ -1,7 +1,7 @@
 // Filename: PlaceableSpheres.cpp
 // Description: See header file for structural information  
 // Author: Joshua Leaney
-// Date Modified: 03/14/21
+// Date Modified: 03/24/21
 //
 
 
@@ -11,20 +11,17 @@
 #include <cmath>
 using namespace std;
 
-PlaceableSpheres::PlaceableSpheres()
-{
+PlaceableSpheres::PlaceableSpheres(){
     positionX = 0.0f;
     positionY = 0.0f;
     positionZ = 0.0f;
     correctLocation = false;
 }
 
-PlaceableSpheres::~PlaceableSpheres()
-{
+PlaceableSpheres::~PlaceableSpheres(){
 }
 
-void PlaceableSpheres::reset()
-{
+void PlaceableSpheres::reset(){
     positionX = getRadius() + 2.0f;
     positionY = getRadius() - 1.0f;
     positionZ = getRadius() - 3.0f;
@@ -32,8 +29,7 @@ void PlaceableSpheres::reset()
 }
 
 // function for drawing the Simple Cubic lattice
-void PlaceableSpheres::placeCubic(GLUquadric *q, Material sMaterials[], GLfloat radius)
-{
+void PlaceableSpheres::placeCubic(GLUquadric *q, Material sMaterials[], GLfloat radius){
     GLfloat r = radius*2.0f;
     setRadius(r);
     
@@ -64,8 +60,7 @@ void PlaceableSpheres::placeCubic(GLUquadric *q, Material sMaterials[], GLfloat 
     glPopMatrix();
 
     // Using a loop to draw all the spheres at the vertices to simplify program
-    for(int i=0; i<8; i++)
-    {
+    for(int i=0; i<8; i++){
         glPushMatrix();
         gluQuadricOrientation(q, GLU_OUTSIDE);
         glEnable(GL_TEXTURE_GEN_S);
@@ -84,8 +79,7 @@ void PlaceableSpheres::placeCubic(GLUquadric *q, Material sMaterials[], GLfloat 
 }
 
 // function for drawing the Body-Centered cubic lattice
-void PlaceableSpheres::placeBCC(GLUquadric *q, Material sMaterials[], GLfloat radius)
-{
+void PlaceableSpheres::placeBCC(GLUquadric *q, Material sMaterials[], GLfloat radius){
     GLfloat r = radius*2.0f;
     
     // assign the vertices of a cube to a multidimensional array to be used for drawing
@@ -131,8 +125,7 @@ void PlaceableSpheres::placeBCC(GLUquadric *q, Material sMaterials[], GLfloat ra
     glPopMatrix();
 
     // Using a loop to draw all the spheres at the vertices to simplify program
-    for(int i=0; i<8; i++)
-    {
+    for(int i=0; i<8; i++){
         // drawing the spheres in the unit cell
         glPushMatrix();
         gluQuadricOrientation(q, GLU_OUTSIDE);
@@ -164,8 +157,7 @@ void PlaceableSpheres::placeBCC(GLUquadric *q, Material sMaterials[], GLfloat ra
 }
 
 // function for drawing the Face-Centered cubic lattice
-void PlaceableSpheres::placeFCC(GLUquadric *q, Material sMaterials[], GLfloat radius)
-{
+void PlaceableSpheres::placeFCC(GLUquadric *q, Material sMaterials[], GLfloat radius){
     GLfloat r = radius*2.0f;
     
     // assign the vertices of a cube to a multidimensional array to be used for drawing
@@ -212,8 +204,7 @@ void PlaceableSpheres::placeFCC(GLUquadric *q, Material sMaterials[], GLfloat ra
     glPopMatrix();
 
     // Using a loop to draw all the spheres at the vertices to simplify program
-    for(int i=0; i<8; i++)
-    {
+    for(int i=0; i<8; i++){
         // Commands for Vertices
         glPushMatrix();
         gluQuadricOrientation(q, GLU_OUTSIDE);
@@ -227,8 +218,7 @@ void PlaceableSpheres::placeFCC(GLUquadric *q, Material sMaterials[], GLfloat ra
     }
 
     // Drawing the face centered atoms
-    for(int j=0; j<6; j++)
-    {
+    for(int j=0; j<6; j++){
         // commands to draw the atoms
         glPushMatrix();
         gluQuadricOrientation(q, GLU_OUTSIDE);
@@ -241,11 +231,9 @@ void PlaceableSpheres::placeFCC(GLUquadric *q, Material sMaterials[], GLfloat ra
         glPopMatrix();
 
         // draw the connections between face centered atoms and vertices
-        for(int k=0; k<8; k++)
-        {   
+        for(int k=0; k<8; k++){   
             // faces on x-axis
-            if(faceCoords[j][0] == vertices[k][0])
-            {
+            if(faceCoords[j][0] == vertices[k][0]){
                 glPushMatrix();
                 glBegin(GL_LINES);
                 glVertex3f(faceCoords[j][0], faceCoords[j][1], faceCoords[j][2]);
@@ -254,8 +242,7 @@ void PlaceableSpheres::placeFCC(GLUquadric *q, Material sMaterials[], GLfloat ra
                 glPopMatrix();
             }
             // faces on y-axis
-            if(faceCoords[j][1] == vertices[k][1])
-            {
+            if(faceCoords[j][1] == vertices[k][1]){
                 glPushMatrix();
                 glBegin(GL_LINES);
                 glVertex3f(faceCoords[j][0], faceCoords[j][1], faceCoords[j][2]);
@@ -264,8 +251,7 @@ void PlaceableSpheres::placeFCC(GLUquadric *q, Material sMaterials[], GLfloat ra
                 glPopMatrix();
             }
             // faces on z-axis
-            if(faceCoords[j][2] == vertices[k][2])
-            {
+            if(faceCoords[j][2] == vertices[k][2]){
                 glPushMatrix();
                 glBegin(GL_LINES);
                 glVertex3f(faceCoords[j][0], faceCoords[j][1], faceCoords[j][2]);
@@ -286,28 +272,26 @@ void PlaceableSpheres::placeFCC(GLUquadric *q, Material sMaterials[], GLfloat ra
     drawArray(q, sMaterials, radius, checkFaceCoords, 6);
 }
 
-float rndf(float maxnum)
-{
+float PlaceableSpheres::rndf(float maxnum){
 	double num;
 	num = (double)rand() * 1.0;
 	return (float)((num / (double)RAND_MAX) * maxnum);
 }
+
 // function for drawing spheres on to scene
-void PlaceableSpheres::placeSphere(GLUquadric *q, Material sMaterials[], GLfloat radius)
-{    
+void PlaceableSpheres::placeSphere(GLUquadric *q, Material sMaterials[], GLfloat radius){    
     glPushMatrix();
     gluQuadricOrientation(q, GLU_OUTSIDE);
     glEnable(GL_TEXTURE_GEN_S);
     glEnable(GL_TEXTURE_GEN_T);
     glTranslatef(getPosX(), getPosY(), getPosZ());
-    //sMaterials[0].setupMaterial();
-    static GLfloat ramp = 0.7;
+    
+    static GLfloat ramp = 0.2;
     ramp += 0.001;
-    if (ramp > 0.9) ramp = 0.7;
-    glColor3f(ramp, ramp, ramp);
+    if (ramp > 0.8) ramp = 0.1;
+    glColor3f(ramp, 0, 0);
 
     gluSphere(q, radius, 50, 25);
-    sMaterials[0].stopMaterial();
     glDisable(GL_TEXTURE_GEN_S);
     glDisable(GL_TEXTURE_GEN_T);
     glPopMatrix();
@@ -315,8 +299,7 @@ void PlaceableSpheres::placeSphere(GLUquadric *q, Material sMaterials[], GLfloat
     // add the highlighting ring here so that it is easier for the user to observe their placements
 }
 
-void PlaceableSpheres::checkLocation(GLfloat myArray[][3], int arraySize)
-{
+void PlaceableSpheres::checkLocation(GLfloat myArray[][3], int arraySize){
     bool correctL = false;
     
     GLfloat xLoc = round(10*getPosX())/10;
@@ -328,16 +311,13 @@ void PlaceableSpheres::checkLocation(GLfloat myArray[][3], int arraySize)
     
     setCorrectLocation(correctL);
 
-    if(getCorrectLocation() == false)
-    {
-        for(int i=0; i<arraySize; i++)
-        {
+    if(getCorrectLocation() == false){
+        for(int i=0; i<arraySize; i++){
             xStoreLoc = round(10*myArray[i][0])/10;
             yStoreLoc = round(10*myArray[i][1])/10;
             zStoreLoc = round(10*myArray[i][2])/10;
 
-            if(xLoc == xStoreLoc && yLoc == yStoreLoc && zLoc == zStoreLoc)
-            {
+            if(xLoc == xStoreLoc && yLoc == yStoreLoc && zLoc == zStoreLoc){
                 correctL = true;
                 setCorrectLocation(correctL);
                 i = arraySize;
@@ -349,8 +329,7 @@ void PlaceableSpheres::checkLocation(GLfloat myArray[][3], int arraySize)
     }
 }
 
-void PlaceableSpheres::storeLocation(GLfloat newArray[][3], int arraySize)
-{
+void PlaceableSpheres::storeLocation(GLfloat newArray[][3], int arraySize){
     int index = 0;
     static bool alreadyIncluded = false;
 
@@ -369,10 +348,8 @@ void PlaceableSpheres::storeLocation(GLfloat newArray[][3], int arraySize)
             } 
         }
         
-        if(alreadyIncluded == false)
-        {
-            for(int i=0; i<arraySize; i++)
-            {
+        if(alreadyIncluded == false){
+            for(int i=0; i<arraySize; i++){
                 if(newArray[i][0] == 20)
                 {
                     index = i;
@@ -391,13 +368,10 @@ void PlaceableSpheres::storeLocation(GLfloat newArray[][3], int arraySize)
     }
 }
 
-void PlaceableSpheres::drawArray(GLUquadric *q, Material sMaterials[],  GLfloat radius, GLfloat myArray[][3], int arraySize)
-{
+void PlaceableSpheres::drawArray(GLUquadric *q, Material sMaterials[],  GLfloat radius, GLfloat myArray[][3], int arraySize){
     // Using a loop to draw all the spheres at the vertices to simplify program
-    for(int i=0; i<arraySize; i++)
-    {
-        if(myArray[i][0] != 20)
-        {
+    for(int i=0; i<arraySize; i++){
+        if(myArray[i][0] != 20){
             glPushMatrix();
             gluQuadricOrientation(q, GLU_OUTSIDE);
             glEnable(GL_TEXTURE_GEN_S);

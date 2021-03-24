@@ -1,7 +1,7 @@
 // Filename: PlaceableSpheres.h
 // Description: Classes for placeable spheres
 // Author: Joshua Leaney
-// Date Modified: 03/14/2021
+// Date Modified: 03/24/2021
 //
 
 
@@ -53,6 +53,7 @@ class PlaceableSpheres
         void placeBCC(GLUquadric *q, Material sMaterials[], GLfloat radius);
         void placeFCC(GLUquadric *q, Material sMaterials[], GLfloat radius);
         void placeSphere(GLUquadric *q, Material sMaterials[], GLfloat radius);
+        float rndf(float maxnum);
         
         // checking location functions
         void checkLocation(GLfloat myArray[][3], int arraySize);
